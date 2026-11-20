@@ -246,7 +246,7 @@ class BadgeHandler(BaseHTTPRequestHandler):
 <style>body{max-width:44rem;margin:12vh auto;padding:1rem;background:#242426;color:#eee;font:16px system-ui}label,input{display:block}input,button{box-sizing:border-box;padding:.7rem;font:inherit;border-radius:.5rem}input{width:100%;margin:.4rem 0 1rem}button{cursor:pointer}</style>
 <h1>Choose a badge character</h1><form id="picker">
 <label>Codex Pets URL<input name="pet" type="url" required value="https://codex-pets.net/#/pets/chiikawa-svg"></label>
-<label>TokenPhage username<input name="username" required value="Thrillcrazyer"></label>
+<label>TokenPhage username<input name="username" required placeholder="Your GitHub username"></label>
 <label>Theme <select name="theme"><option>claude</option><option>grass-claude</option></select></label>
 <button>Open badge</button></form>
 <script>document.querySelector('form').onsubmit = event => {
