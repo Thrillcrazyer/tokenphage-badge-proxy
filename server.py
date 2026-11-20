@@ -21,14 +21,15 @@ PALETTE = {
     "#94a3b8": "#afafb4",  # Secondary text
     "#4ade80": "#e0e0e3",  # Cache hit rate
 }
-TOKEN_LABEL_BLUE = "#a6caff"
-TOKEN_TOTAL_BLUE = "#79b7ff"
-ACTIVITY_BLUES = {
-    "#3a1e10": "#273c54",
-    "#6b3a1f": "#345a80",
-    "#a55733": "#477eb5",
-    "#d97757": "#649cda",
-    "#ffb38d": "#92c7ff",
+BADGE_FONT = "'SF Mono',SFMono-Regular,Menlo,Consolas,'Liberation Mono',monospace"
+PURPLE = "#D08BF5"
+TOKEN_WHITE = "#ffffff"
+ACTIVITY_GRAYS = {
+    "#3a1e10": "#646464",
+    "#6b3a1f": "#898989",
+    "#a55733": "#adadad",
+    "#d97757": "#d5d5d5",
+    "#ffb38d": "#ffffff",
 }
 
 
@@ -68,7 +69,7 @@ def customize_svg(payload, pet):
         for attribute in PAINT_ATTRIBUTES.intersection(element.attrib):
             color = element.attrib[attribute]
             if element in activity_bars and attribute == "fill":
-                element.set(attribute, ACTIVITY_BLUES.get(color.lower(), TOKEN_TOTAL_BLUE))
+                element.set(attribute, ACTIVITY_GRAYS.get(color.lower(), TOKEN_WHITE))
             else:
                 element.set(attribute, gray_color(color))
         if element.get("attributeName") in PAINT_ATTRIBUTES:
@@ -81,9 +82,9 @@ def customize_svg(payload, pet):
     # The upstream template places the total and its unit on the same baseline.
     for label in card.findall(svg_tag("text")):
         if label.text in {"TOKEN 누적", "tokens", "최근 30일"}:
-            label.set("fill", TOKEN_LABEL_BLUE)
+            label.set("fill", "#ffffff")
         elif label.get("x") == "30" and label.get("y") == "132":
-            label.set("fill", TOKEN_TOTAL_BLUE)
+            label.set("fill", TOKEN_WHITE)
 
     # Keep the original chart coordinates together in the right column.
     width = 720
@@ -151,10 +152,17 @@ def customize_svg(payload, pet):
         })
     title = ET.SubElement(header, svg_tag("text"), {
         "x": str(width // 2), "y": "20", "text-anchor": "middle", "fill": "#d5d5d8",
-        "font-family": "-apple-system,BlinkMacSystemFont,system-ui,sans-serif",
         "font-size": "12", "font-weight": "600",
     })
     title.text = "TokenPhage"
+    for label in root.iter(svg_tag("text")):
+        label.set("font-family", BADGE_FONT)
+        parts = re.split(r"(@|[0-9]+(?:[.,][0-9]+)*)", label.text or "")
+        label.text = parts[0]
+        for accent, rest in zip(parts[1::2], parts[2::2]):
+            span = ET.SubElement(label, svg_tag("tspan"), {"fill": PURPLE})
+            span.text = accent
+            span.tail = rest
     return ET.tostring(root, encoding="utf-8")
 
 
