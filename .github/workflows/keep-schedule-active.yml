@@ -1,0 +1,28 @@
+name: Keep badge schedule active
+
+on:
+  schedule:
+    - cron: '37 2 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  maintain:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - name: Record activity after 45 days without a commit
+        shell: bash
+        run: |
+          last_commit=$(git log -1 --format=%ct)
+          if (( $(date +%s) - last_commit < 45 * 86400 )); then
+            exit 0
+          fi
+          git -c user.name='github-actions[bot]' \
+              -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              commit --allow-empty -m 'Keep badge update schedule active'
+          git push origin HEAD
