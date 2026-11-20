@@ -20,15 +20,18 @@ def main():
     badge = args.output / relative_path
     badge.parent.mkdir(parents=True, exist_ok=True)
     badge.write_bytes(svg)
+    grass_path = f"badges/{args.username}-grass-claude.svg"
+    (args.output / grass_path).write_bytes(render_badge(args.username, pet, "grass-claude"))
     (args.output / "index.html").write_text(f"""<!doctype html>
-<html lang="ko">
+<html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{args.username} · TokenPhage</title>
 <main>
-  <a href="{relative_path}"><img src="{relative_path}" alt="{args.username}의 TokenPhage 배지"
-    width="720" height="242" style="max-width:100%;height:auto"></a>
-  <p><a href="{relative_path}">배지 SVG 열기</a></p>
+  <a href="{relative_path}"><img src="{relative_path}" alt="TokenPhage badge for {args.username}"
+    style="max-width:100%;height:auto"></a>
+  <p><a href="{relative_path}">Open badge SVG</a></p>
+  <a href="{grass_path}"><img src="{grass_path}" alt="Annual token activity for {args.username}" style="max-width:100%;height:auto"></a>
 </main>
 </html>
 """, encoding="utf-8")

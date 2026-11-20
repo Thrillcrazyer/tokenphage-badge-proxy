@@ -1,20 +1,41 @@
-# TokenPhage 배지 후처리
+# TokenPhage Badge Proxy
 
-공식 Claude SVG에서 통계와 애니메이션을 가져와 회색 팔레트와 macOS 스타일 상단 바를 적용합니다. Codex Pets 캐릭터의 아홉 가지 표정과 동작을 무작위 순서로 반복하고 제목과 본문은 베타 테스터 배지의 고정폭 글꼴을 사용합니다. 숫자와 @는 보라색으로, 최근 30일 그래프는 회색부터 흰색까지 사용량에 따라 표시합니다.
+Display the token usage you sync to TokenPhage in your GitHub profile README. This project fetches your badge as an SVG from the official TokenPhage API, then customizes its colors, typography, and layout and adds an animated Codex Pets character. The usage figures and model rankings come directly from TokenPhage. [Original TokenPhage badges](https://github.com/TOKENPHAGE/tokenphage-api)
 
-## GitHub Pages 배지
+## Preview
 
-`Thrillcrazyer/tokenphage-badge-proxy`의 첫 배포가 끝나면 다음 한 줄을 프로필 README에 붙이세요.
+These examples were generated for `Thrillcrazyer`. Both feature the default character, Chiikawa by godxxy. [Chiikawa on Codex Pets](https://codex-pets.net/#/pets/chiikawa-svg)
+
+**Usage card · `claude`**
+
+![Chiikawa beside Thrillcrazyer’s total token count, cache hit rate, usage over the last 30 days, and top five models](docs/previews/claude.svg)
+
+**Annual activity heatmap · `grass-claude`**
+
+![Chiikawa walking above a green heatmap of Thrillcrazyer’s daily token usage over the past year](docs/previews/grass-claude.svg)
+
+## Add a badge to your GitHub profile
+
+After the first GitHub Pages deployment, paste either line below into your profile `README.md`. These URLs show usage for `Thrillcrazyer`. GitHub Actions rebuilds both SVGs every six hours, so the same links show updated stats.
 
 ```markdown
-![Thrillcrazyer의 TokenPhage 배지](https://thrillcrazyer.github.io/tokenphage-badge-proxy/badges/Thrillcrazyer.svg)
+![TokenPhage usage card](https://thrillcrazyer.github.io/tokenphage-badge-proxy/badges/Thrillcrazyer.svg)
 ```
 
-처음 배포할 때는 이 프로젝트를 위 이름의 GitHub 저장소 `main` 브랜치에 올리고, 저장소의 **Settings → Pages → Build and deployment → Source**에서 **GitHub Actions**를 선택하세요. **Actions → Publish TokenPhage badge → Run workflow**로 첫 배포를 실행할 수 있습니다.
+```markdown
+![TokenPhage annual activity heatmap](https://thrillcrazyer.github.io/tokenphage-badge-proxy/badges/Thrillcrazyer-grass-claude.svg)
+```
 
-이후 `main`에 푸시하거나 6시간 주기의 예약 작업이 실행되면 통계와 캐릭터를 다시 받아 같은 주소에 게시합니다. TokenPhage에 해당 계정의 동기화 기록이 필요합니다. 생성에 실패하면 마지막으로 배포한 배지를 계속 제공합니다.
+## Deploy badges for your own account
 
-로컬에서도 동일한 정적 사이트를 만들 수 있습니다.
+1. Sync your usage to TokenPhage under your GitHub username. TokenPhage uses that history to generate your badges. [TokenPhage CLI guide](https://github.com/TOKENPHAGE/tokenphage-cli)
+2. Fork this repository and enable workflows in your fork’s **Actions** tab. Under **Settings → Pages → Build and deployment → Source**, select **GitHub Actions**.
+3. In the workflow command `python build_pages.py Thrillcrazyer`, replace `Thrillcrazyer` with the GitHub username you synced. To use a different character, append its Codex Pets page URL with the `--pet` option, for example `--pet 'https://codex-pets.net/#/pets/umaru'`. Commit the change to `main`. [Deployment workflow](.github/workflows/badge.yml)
+4. Once **Actions → Publish TokenPhage badge** finishes deploying, open your Pages site. Click the badge you want, copy its SVG URL, and use it in the corresponding Markdown example above.
+
+Each push to `main` refreshes both badges. To refresh them manually, select **Actions → Publish TokenPhage badge → Run workflow**.
+
+## Preview locally
 
 ```bash
 python3 -m pip install -r requirements.txt
@@ -22,25 +43,8 @@ python3 build_pages.py Thrillcrazyer
 python3 -m http.server 8000 --directory _site
 ```
 
-캐릭터는 기본값인 Umaru를 사용합니다. 변경하려면 워크플로의 생성 명령에 `--pet 'https://codex-pets.net/#/pets/캐릭터ID'`를 추가하세요.
+Open the local site to preview both badges as they will appear on GitHub Pages. [Local preview](http://localhost:8000)
 
-## 로컬 프록시
+To try different usernames, characters, and themes, run `python3 server.py` and open the picker in your browser. [Local badge picker](http://localhost:8787)
 
-```bash
-python3 -m pip install -r requirements.txt
-python3 server.py
-```
-
-브라우저에서 `http://localhost:8787/badge/YOUR_GITHUB_USERNAME?theme=claude`를 열면 배지를 확인할 수 있습니다. 해당 사용자명으로 TokenPhage에서 동기화한 기록이 있어야 합니다.
-
-서버에 공개 HTTPS 주소를 연결한 뒤 GitHub README에 이미지로 붙일 수 있습니다.
-
-```markdown
-[![TokenPhage](https://badge.example.com/badge/YOUR_GITHUB_USERNAME?theme=claude)](https://github.com/TOKENPHAGE)
-```
-
-기본 캐릭터는 [Umaru (yc)](https://codex-pets.net/#/pets/umaru)입니다. 다른 캐릭터를 쓰려면 Codex Pets 페이지 주소를 `pet`에 넣으세요. 주소의 `#`는 브라우저에서 서버로 전달되도록 `%23`으로 적습니다.
-
-```text
-http://localhost:8787/badge/YOUR_GITHUB_USERNAME?pet=https://codex-pets.net/%23/pets/umaru
-```
+You can also request a badge directly at a path such as `/badge/Thrillcrazyer?theme=grass-claude`. When passing a character URL in the `pet` query parameter, encode the `#` in that URL as `%23`.

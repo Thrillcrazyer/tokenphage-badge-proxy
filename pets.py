@@ -9,7 +9,7 @@ from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from PIL import Image
 
-DEFAULT_PET = "https://codex-pets.net/#/pets/umaru"
+DEFAULT_PET = "https://codex-pets.net/#/pets/chiikawa-svg"
 
 
 def pet_id(page):
@@ -51,12 +51,14 @@ def pet_atlas(slug):
     return metadata["displayName"], uri, height
 
 
+# Idle, run right, run left, wave, jump, fail, wait, run, review.
+FRAME_COUNTS = (6, 8, 8, 4, 5, 8, 6, 6, 6)
+
+
 def emotion_sequence():
-    # Idle, both runs, wave, jump, fail, wait, run, review (Codex Pets atlas order).
-    counts = (6, 8, 8, 4, 5, 8, 6, 6, 6)
     states = []
     for _ in range(32):
-        batch = random.sample(range(len(counts)), len(counts))
+        batch = random.sample(range(len(FRAME_COUNTS)), len(FRAME_COUNTS))
         if states and batch[0] == states[-1]:
             batch[0], batch[1] = batch[1], batch[0]
         states.extend(batch)
@@ -65,6 +67,26 @@ def emotion_sequence():
 
     frames = []
     for row in states:
-        motion = [f"{-192 * frame} {-208 * row}" for frame in range(counts[row])]
+        motion = [f"{-192 * frame} {-208 * row}" for frame in range(FRAME_COUNTS[row])]
         frames.extend(motion * random.randint(2, 3))
     return frames
+
+
+# Phase boundaries in milliseconds: pause, run right, pause, run left.
+GRASS_PHASE_MS = (0, 2400, 10800, 13200, 21600)
+
+
+def grass_animation():
+    trips = 10
+    cycle_ms = GRASS_PHASE_MS[-1]
+    values, times = [], []
+    for trip in range(trips):
+        left_pause, right_pause = random.sample((0, 3, 4, 5, 6, 8), 2)
+        phases = zip(GRASS_PHASE_MS, GRASS_PHASE_MS[1:], (left_pause, 1, right_pause, 2))
+        for start, end, row in phases:
+            for frame, ms in enumerate(range(start, end, 280)):
+                column = frame % FRAME_COUNTS[row]
+                values.append(f"{-192 * column} {-208 * row}")
+                times.append(f"{(trip * cycle_ms + ms) / (trips * cycle_ms):.8f}")
+    return {"values": ";".join(values), "keyTimes": ";".join(times),
+            "dur": f"{trips * cycle_ms // 1000}s"}
