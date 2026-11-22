@@ -9,7 +9,7 @@ from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from PIL import Image
 
-DEFAULT_PET = "https://codex-pets.net/#/pets/chiikawa-svg"
+DEFAULT_PET = "https://codex-pets.net/#/pets/duodong"
 
 
 def pet_id(page):

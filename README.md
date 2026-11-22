@@ -10,9 +10,9 @@ Show your TokenPhage usage in your GitHub profile README with two animated badge
 
 **Annual activity heatmap** (`grass-claude`) shows a year of daily token usage. Brighter green squares indicate higher usage.
 
-![Example annual activity badge with Chiikawa walking above a green heatmap](docs/previews/grass-claude.svg)
+![Example annual activity badge with Duodong walking above a green heatmap](docs/previews/grass-claude.svg)
 
-Both examples feature the default character, Chiikawa by godxxy. [Chiikawa on Codex Pets](https://codex-pets.net/#/pets/chiikawa-svg)
+Both examples feature the default character, Duodong (多栋), a beagle by froggie. [Duodong on Codex Pets](https://codex-pets.net/#/pets/duodong)
 
 ## Publish your badges on GitHub Pages
 
